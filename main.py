@@ -2,6 +2,7 @@ from machine import Pin,SPI
 import network
 import time
 from microWebSrv import MicroWebSrv
+from redfish import Redfish
 
 spi=SPI(0,2_000_000, mosi=Pin(19),miso=Pin(16),sck=Pin(18))
 nic = network.WIZNET5K(spi,Pin(17),Pin(20)) #spi,cs,reset pin
@@ -61,34 +62,7 @@ def redfishSystems(httpClient, httpResponse):
 @MicroWebSrv.route('/redfish/v1/Systems/<id>')
 def redfishSystem(httpClient, httpResponse, routeArgs):
     id = routeArgs['id']
-
-    httpResponse.WriteResponseJSONOk({
-        "@odata.context": "/redfish/v1/$metadata#Systems/Members/$entity",
-        "@odata.id": f"/redfish/v1/Systems/{id}/",
-        "@odata.type": "#ComputerSystem.1.0.1.ComputerSystem",
-        "Actions": {
-            "#ComputerSystem.Reset": {
-                "ResetType@Redfish.AllowableValues": [
-                    "On",
-                    "ForceOff",
-                    "ForceRestart",
-                    "PushPowerButton"
-                ],
-                "target": "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
-            }
-        },
-        "Id": id,
-        "UUID": "123-321",
-        "Manufacturer": "Redfish",
-        "Model": id,
-        "MemorySummary": {
-            "TotalSystemMemoryGiB": "128"
-        },
-        "ProcessorSummary": {
-            "Count": "2",
-            "Model": "Intel(R) Generic"
-        }
-    })
+    httpResponse.WriteResponseJSONOk(Redfish.getSystem(id))
 
 main()
 mws = MicroWebSrv()      # TCP port 80 and files in /flash/www

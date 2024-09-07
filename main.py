@@ -58,11 +58,13 @@ def redfishSystems(httpClient, httpResponse):
         "Type": "Collection.1.0.0"
     })
     
-@MicroWebSrv.route('/redfish/v1/Systems/1')
-def redfishSystem(httpClient, httpResponse):
+@MicroWebSrv.route('/redfish/v1/Systems/<id>')
+def redfishSystem(httpClient, httpResponse, routeArgs):
+    id = routeArgs['id']
+
     httpResponse.WriteResponseJSONOk({
         "@odata.context": "/redfish/v1/$metadata#Systems/Members/$entity",
-        "@odata.id": "/redfish/v1/Systems/1/",
+        "@odata.id": f"/redfish/v1/Systems/{id}/",
         "@odata.type": "#ComputerSystem.1.0.1.ComputerSystem",
         "Actions": {
             "#ComputerSystem.Reset": {
@@ -75,10 +77,10 @@ def redfishSystem(httpClient, httpResponse):
                 "target": "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
             }
         },
-        "Id": "1",
+        "Id": id,
         "UUID": "123-321",
         "Manufacturer": "Redfish",
-        "Model": "1",
+        "Model": id,
         "MemorySummary": {
             "TotalSystemMemoryGiB": "128"
         },
